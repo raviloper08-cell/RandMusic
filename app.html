@@ -1,269 +1,522 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>R&Music</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>R&Music</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
 :root {
-  --bg: #fff; --bg2: #f5f5f7; --text: #1a1a1a; --text2: #8e8e93;
-  --gold: #c9a227; --gold2: #e8c547; --border: #ebebeb; --player: #f8f8fa;
+  --bg: #fff;
+  --text: #000;
+  --muted: #8e8e93;
+  --gold: #fcca00;
+  --gold-dark: #e6b800;
+  --line: #f0f0f0;
+  --player-bg: #f2f2f7;
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-body { font-family: Inter, -apple-system, system-ui, sans-serif; background:var(--bg); color:var(--text); height:100vh; height:100dvh; overflow:hidden; }
-.app { display:flex; flex-direction:column; height:100%; max-width:480px; margin:0 auto; position:relative; background:var(--bg); }
-.topbar { display:flex; align-items:center; justify-content:space-between; padding:12px 16px 8px; }
-.topbar h1 { font-size:17px; font-weight:600; text-align:center; flex:1; }
-.icon-btn { width:36px; height:36px; border:none; background:none; font-size:20px; cursor:pointer; }
-.content { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding-bottom:140px; }
-.cats { display:flex; gap:20px; padding:8px 16px 20px; overflow-x:auto; }
-.cat { display:flex; flex-direction:column; align-items:center; gap:6px; min-width:64px; cursor:pointer; }
-.cat-icon { width:56px; height:56px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:26px; }
-.cat span { font-size:12px; font-weight:500; }
-.section { padding:0 16px 24px; }
-.section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
-.section-head h2 { font-size:20px; font-weight:700; }
-.h-scroll { display:flex; gap:12px; overflow-x:auto; margin:0 -16px; padding:0 16px; }
-.playlist-card { min-width:140px; max-width:140px; cursor:pointer; }
-.playlist-card .cover { width:140px; height:140px; border-radius:12px; overflow:hidden; margin-bottom:8px; background:#eee; }
-.playlist-card .cover img { width:100%; height:100%; object-fit:cover; }
-.playlist-card .title { font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.playlist-card .sub { font-size:12px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.promo { margin:0 16px 24px; background:linear-gradient(135deg,#1a1a2e,#2d1b4e); border-radius:16px; padding:20px; display:flex; align-items:center; gap:16px; color:#fff; }
-.promo-text h3 { font-size:18px; font-weight:700; margin-bottom:6px; line-height:1.25; }
-.promo-text p { font-size:13px; opacity:.85; margin-bottom:14px; }
-.promo-btn { background:var(--gold2); color:#1a1a1a; border:none; border-radius:20px; padding:10px 20px; font-weight:600; font-size:14px; cursor:pointer; }
-.promo-art { width:90px; height:90px; flex-shrink:0; border-radius:12px; background:linear-gradient(135deg,var(--gold),#6b4c9a); display:flex; align-items:center; justify-content:center; font-size:40px; }
-.track-item { display:flex; align-items:center; gap:12px; padding:10px 0; cursor:pointer; }
-.track-item .t-cover { width:48px; height:48px; border-radius:8px; object-fit:cover; background:#eee; flex-shrink:0; }
-.track-item .t-info { flex:1; min-width:0; }
-.track-item .t-title { font-size:15px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.track-item .t-artist { font-size:13px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.wave-screen { position:absolute; inset:0; z-index:50; background:#0a0a0c; display:none; flex-direction:column; color:#fff; }
-.wave-screen.open { display:flex; }
-.wave-bg { position:absolute; inset:0; background: radial-gradient(ellipse at 30% 20%,rgba(201,162,39,.35),transparent 50%), radial-gradient(ellipse at 70% 60%,rgba(168,100,200,.3),transparent 50%), radial-gradient(ellipse at 40% 80%,rgba(80,120,200,.25),transparent 40%); filter:blur(40px); }
-.wave-content { position:relative; z-index:2; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 24px 120px; text-align:center; }
-.wave-logo { font-size:14px; font-weight:600; letter-spacing:1px; color:var(--gold2); margin-bottom:32px; }
-.wave-title { font-size:36px; font-weight:800; margin-bottom:28px; }
-.wave-play { width:72px; height:72px; border-radius:50%; background:var(--gold2); border:none; font-size:28px; color:#1a1a1a; display:flex; align-items:center; justify-content:center; cursor:pointer; margin-bottom:28px; box-shadow:0 8px 32px rgba(201,162,39,.4); }
-.wave-now { background:rgba(255,255,255,.12); border-radius:24px; padding:10px 18px; font-size:13px; max-width:90%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.wave-close { position:absolute; top:16px; left:16px; z-index:3; background:rgba(255,255,255,.15); border:none; width:36px; height:36px; border-radius:50%; color:#fff; font-size:18px; cursor:pointer; }
-.mini-player { position:absolute; bottom:56px; left:8px; right:8px; background:var(--player); border-radius:14px; display:none; align-items:center; gap:10px; padding:8px 12px; box-shadow:0 4px 20px rgba(0,0,0,.08); z-index:30; }
-.mini-player.show { display:flex; }
-.mp-cover { width:40px; height:40px; border-radius:8px; object-fit:cover; background:#ddd; flex-shrink:0; }
-.mp-info { flex:1; min-width:0; }
-.mp-title { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.mp-artist { font-size:11px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.mp-btn { background:none; border:none; font-size:22px; color:var(--text); cursor:pointer; padding:4px; }
-.mp-btn.liked { color:#ff3b5c; }
-.tabbar { position:absolute; bottom:0; left:0; right:0; height:56px; background:rgba(255,255,255,.92); backdrop-filter:blur(20px); border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-around; z-index:40; }
-.tab { display:flex; flex-direction:column; align-items:center; gap:2px; background:none; border:none; cursor:pointer; color:var(--text2); font-size:10px; font-weight:500; padding:6px 12px; }
-.tab.active { color:var(--gold); }
-.tab-icon { font-size:22px; }
-.big-heart { font-size:64px; text-align:center; margin:24px 0 12px; }
-.collection-title { text-align:center; font-size:18px; font-weight:600; }
-.collection-sub { text-align:center; font-size:13px; color:var(--text2); margin-bottom:28px; }
-.liked-row { display:flex; align-items:center; gap:14px; padding:12px 16px; }
-.heart-icon { width:48px; height:48px; border-radius:12px; background:linear-gradient(135deg,#ff6b8a,#ff3b5c); display:flex; align-items:center; justify-content:center; font-size:24px; color:#fff; }
-.profile-avatar { width:88px; height:88px; border-radius:50%; background:linear-gradient(135deg,var(--gold),#a8a8b0); margin:24px auto 12px; display:flex; align-items:center; justify-content:center; font-size:36px; font-weight:700; color:#fff; }
-.profile-name { text-align:center; font-size:22px; font-weight:700; }
-.profile-sub { text-align:center; font-size:13px; color:var(--text2); margin-bottom:28px; }
-.menu-item { display:flex; justify-content:space-between; padding:16px; border-bottom:1px solid var(--border); font-size:16px; }
-  </style>
+body {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #000;
+  color: var(--text);
+  height: 100vh; height: 100dvh;
+  display: flex; justify-content: center;
+}
+.app {
+  width: 100%; max-width: 430px;
+  height: 100%;
+  background: var(--bg);
+  position: relative;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+/* ===== CONTENT ===== */
+.screen {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 130px;
+}
+
+/* Header */
+.hdr {
+  padding: 14px 16px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; background: var(--bg); z-index: 10;
+}
+.hdr h1 { font-size: 17px; font-weight: 600; flex: 1; text-align: center; }
+.hdr-btn {
+  width: 32px; height: 32px; border: none; background: none;
+  font-size: 18px; color: var(--text); cursor: pointer;
+}
+
+/* Categories */
+.cats {
+  display: flex; gap: 18px;
+  padding: 6px 16px 22px;
+  overflow-x: auto;
+}
+.cat {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  min-width: 62px; cursor: pointer;
+}
+.cat-ico {
+  width: 58px; height: 58px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+}
+.cat span { font-size: 12px; font-weight: 500; }
+
+/* Sections */
+.sec { padding: 0 16px 26px; }
+.sec-title {
+  font-size: 22px; font-weight: 700;
+  margin-bottom: 14px;
+}
+
+/* Horizontal cards */
+.row {
+  display: flex; gap: 12px;
+  overflow-x: auto;
+  margin: 0 -16px; padding: 0 16px 4px;
+}
+.card {
+  width: 136px; flex-shrink: 0; cursor: pointer;
+}
+.card-img {
+  width: 136px; height: 136px; border-radius: 12px;
+  overflow: hidden; background: #e8e8ed; margin-bottom: 8px;
+  position: relative;
+}
+.card-img img { width: 100%; height: 100%; object-fit: cover; }
+.card-title {
+  font-size: 14px; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.card-sub {
+  font-size: 12px; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Promo */
+.banner {
+  margin: 0 16px 26px;
+  background: linear-gradient(135deg, #1c1c2e 0%, #3a1f5c 100%);
+  border-radius: 18px;
+  padding: 22px 20px;
+  display: flex; align-items: center; gap: 14px;
+  color: #fff;
+}
+.banner h3 { font-size: 19px; font-weight: 700; line-height: 1.25; margin-bottom: 6px; }
+.banner p { font-size: 13px; opacity: 0.8; margin-bottom: 14px; }
+.banner-btn {
+  background: var(--gold);
+  color: #000;
+  border: none;
+  border-radius: 22px;
+  padding: 10px 22px;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+}
+.banner-art {
+  width: 84px; height: 84px; border-radius: 14px; flex-shrink: 0;
+  background: linear-gradient(135deg, #fcca00, #9b59b6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
+}
+
+/* Track rows */
+.trow {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+.trow img {
+  width: 48px; height: 48px; border-radius: 8px;
+  object-fit: cover; background: #e8e8ed; flex-shrink: 0;
+}
+.trow .info { flex: 1; min-width: 0; }
+.trow .name {
+  font-size: 15px; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.trow .art {
+  font-size: 13px; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ===== WAVE (immersive) ===== */
+.wave {
+  position: absolute; inset: 0; z-index: 60;
+  background: #0d0d12;
+  display: none; flex-direction: column;
+  color: #fff;
+}
+.wave.on { display: flex; }
+.wave-glow {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(252,202,0,0.4), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 70%, rgba(155,89,182,0.35), transparent),
+    radial-gradient(ellipse 50% 40% at 20% 80%, rgba(52,152,219,0.25), transparent);
+}
+.wave-ui {
+  position: relative; z-index: 2;
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+.wave-back {
+  position: absolute; top: 16px; left: 16px;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(255,255,255,0.12); border: none;
+  color: #fff; font-size: 18px; cursor: pointer;
+}
+.wave-brand {
+  font-size: 13px; font-weight: 600; letter-spacing: 1.5px;
+  color: var(--gold); margin-bottom: 20px;
+}
+.wave-h1 {
+  font-size: 34px; font-weight: 800;
+  margin-bottom: 36px; letter-spacing: -0.5px;
+}
+.wave-btn {
+  width: 76px; height: 76px; border-radius: 50%;
+  background: var(--gold); border: none;
+  font-size: 30px; color: #000;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 10px 40px rgba(252,202,0,0.45);
+  margin-bottom: 28px;
+}
+.wave-track {
+  background: rgba(255,255,255,0.12);
+  border-radius: 24px;
+  padding: 10px 20px;
+  font-size: 13px;
+  max-width: 85%;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ===== MINI PLAYER ===== */
+.player {
+  position: absolute;
+  left: 8px; right: 8px; bottom: 58px;
+  height: 56px;
+  background: var(--player-bg);
+  border-radius: 14px;
+  display: none; align-items: center; gap: 10px;
+  padding: 0 10px 0 8px;
+  z-index: 40;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+.player.show { display: flex; }
+.player img {
+  width: 40px; height: 40px; border-radius: 8px;
+  object-fit: cover; background: #ddd; flex-shrink: 0;
+}
+.player .pi { flex: 1; min-width: 0; }
+.player .pt {
+  font-size: 13px; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.player .pa {
+  font-size: 11px; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pbtn {
+  width: 36px; height: 36px; border: none; background: none;
+  font-size: 20px; cursor: pointer; color: var(--text);
+  display: flex; align-items: center; justify-content: center;
+}
+.pbtn.liked { color: #ff2d55; }
+
+/* ===== TAB BAR ===== */
+.tabs {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 52px;
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(16px);
+  border-top: 0.5px solid var(--line);
+  display: flex; align-items: stretch;
+  z-index: 50;
+}
+.tab {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 2px;
+  border: none; background: none; cursor: pointer;
+  color: #8e8e93; font-size: 10px; font-weight: 500;
+}
+.tab.on { color: var(--gold-dark); }
+.tab svg { width: 24px; height: 24px; }
+
+/* Collection */
+.col-heart {
+  font-size: 72px; text-align: center;
+  margin: 28px 0 10px;
+  filter: drop-shadow(0 6px 16px rgba(180,80,220,0.35));
+}
+.col-title { text-align: center; font-size: 18px; font-weight: 600; }
+.col-sub { text-align: center; font-size: 13px; color: var(--muted); margin: 4px 0 28px; }
+.like-block {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 16px; margin-bottom: 8px;
+}
+.like-ico {
+  width: 50px; height: 50px; border-radius: 12px;
+  background: linear-gradient(135deg, #ff6b8a, #ff2d55);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: #fff;
+}
+
+/* Profile */
+.av {
+  width: 90px; height: 90px; border-radius: 50%;
+  background: linear-gradient(135deg, #fcca00, #b0b0b8);
+  margin: 28px auto 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 38px; font-weight: 700; color: #fff;
+}
+.pname { text-align: center; font-size: 22px; font-weight: 700; }
+.psub { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 32px; }
+.mitem {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 16px;
+  border-bottom: 0.5px solid var(--line);
+  font-size: 16px;
+}
+.mitem span:last-child { color: var(--muted); }
+</style>
 </head>
 <body>
 <div class="app">
-  <div class="content" id="content"></div>
+  <div class="screen" id="screen"></div>
 
-  <div class="mini-player" id="miniPlayer">
-    <img class="mp-cover" id="mpCover" alt="">
-    <div class="mp-info">
-      <div class="mp-title" id="mpTitle">—</div>
-      <div class="mp-artist" id="mpArtist">—</div>
+  <div class="player" id="player">
+    <img id="pCover" alt="">
+    <div class="pi">
+      <div class="pt" id="pTitle">—</div>
+      <div class="pa" id="pArtist">—</div>
     </div>
-    <button class="mp-btn" id="mpLike">♡</button>
-    <button class="mp-btn" id="mpPlay">▶</button>
+    <button class="pbtn" id="pLike">♡</button>
+    <button class="pbtn" id="pPlay">▶</button>
   </div>
 
-  <div class="tabbar">
-    <button class="tab active" data-tab="home"><span class="tab-icon">✦</span>Главная</button>
-    <button class="tab" data-tab="wave"><span class="tab-icon">♪</span>Волна</button>
-    <button class="tab" data-tab="collection"><span class="tab-icon">♡</span>Коллекция</button>
-    <button class="tab" data-tab="profile"><span class="tab-icon">☺</span>Профиль</button>
+  <div class="tabs">
+    <button class="tab on" data-t="home">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 9.5V21h7v-6h6v6h7V9.5L12 2z"/></svg>
+      Главная
+    </button>
+    <button class="tab" data-t="wave">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v18M8 7v10M4 10v4M16 7v10M20 10v4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>
+      Волна
+    </button>
+    <button class="tab" data-t="col">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-9.5-8.5C.5 9 3 5 6.5 5c2 0 3.5 1.2 4.5 2.5C12 6.2 13.5 5 15.5 5 19 5 21.5 9 21.5 12.5 19 16.5 12 21 12 21z"/></svg>
+      Коллекция
+    </button>
+    <button class="tab" data-t="prof">
+      <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Профиль
+    </button>
   </div>
 
-  <div class="wave-screen" id="waveScreen">
-    <div class="wave-bg"></div>
-    <button class="wave-close" id="waveClose">←</button>
-    <div class="wave-content">
-      <div class="wave-logo">R&MUSIC</div>
-      <div class="wave-title">Золотая Волна</div>
-      <button class="wave-play" id="wavePlayBtn">▶</button>
-      <div class="wave-now" id="waveNow">Нажми play и слушай</div>
+  <div class="wave" id="wave">
+    <div class="wave-glow"></div>
+    <button class="wave-back" id="waveBack">←</button>
+    <div class="wave-ui">
+      <div class="wave-brand">R&MUSIC</div>
+      <div class="wave-h1">Золотая Волна</div>
+      <button class="wave-btn" id="waveBtn">▶</button>
+      <div class="wave-track" id="waveTrack">Нажми play</div>
     </div>
   </div>
 </div>
 
-<audio id="audio" preload="auto"></audio>
+<audio id="audio"></audio>
 
 <script>
-// Встроенные бесплатные треки (работают без API)
-const tracks = [{"id":"427181eb-a1a4-4983-bde3-9d08abb7f768","title":"Deja Vu","artist":"Aeris","duration":141,"cover":"https://eu.data.freetouse.com/music/tracks/427181eb-a1a4-4983-bde3-9d08abb7f768/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/427181eb-a1a4-4983-bde3-9d08abb7f768/file/mp3/file.mp3"},{"id":"f78ea6a2-1063-654f-ddff-a052198609a2","title":"Bloom","artist":"Nebulite","duration":181,"cover":"https://eu.data.freetouse.com/music/tracks/f78ea6a2-1063-654f-ddff-a052198609a2/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/f78ea6a2-1063-654f-ddff-a052198609a2/file/mp3/file.mp3"},{"id":"40973ee4-4486-4513-9046-09d2749642b4","title":"Back To Synthwave","artist":"Nebulite","duration":187,"cover":"https://eu.data.freetouse.com/music/tracks/40973ee4-4486-4513-9046-09d2749642b4/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/40973ee4-4486-4513-9046-09d2749642b4/file/mp3/file.mp3"},{"id":"7d57ea7a-85a8-4f71-97c8-7b777eaa02f6","title":"Stellar","artist":"Aventure","duration":182,"cover":"https://eu.data.freetouse.com/music/tracks/7d57ea7a-85a8-4f71-97c8-7b777eaa02f6/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/7d57ea7a-85a8-4f71-97c8-7b777eaa02f6/file/mp3/file.mp3"},{"id":"ba1fa94b-1d39-7b71-7fc1-63ef5c30f357","title":"At Ease","artist":"Hazelwood","duration":106,"cover":"https://eu.data.freetouse.com/music/tracks/ba1fa94b-1d39-7b71-7fc1-63ef5c30f357/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/ba1fa94b-1d39-7b71-7fc1-63ef5c30f357/file/mp3/file.mp3"},{"id":"f58126e1-6516-192a-8a96-c8145fb11d6f","title":"This Is For You","artist":"Lukrembo","duration":183,"cover":"https://eu.data.freetouse.com/music/tracks/f58126e1-6516-192a-8a96-c8145fb11d6f/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/f58126e1-6516-192a-8a96-c8145fb11d6f/file/mp3/file.mp3"},{"id":"6aba646c-9e36-7145-ad6a-157dbadf2778","title":"Stadium Rock","artist":"Pufino","duration":114,"cover":"https://eu.data.freetouse.com/music/tracks/6aba646c-9e36-7145-ad6a-157dbadf2778/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/6aba646c-9e36-7145-ad6a-157dbadf2778/file/mp3/file.mp3"},{"id":"18a9619f-ee7c-4844-884c-3d4ea3b78c44","title":"Undercover","artist":"Zambolino","duration":124,"cover":"https://eu.data.freetouse.com/music/tracks/18a9619f-ee7c-4844-884c-3d4ea3b78c44/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/18a9619f-ee7c-4844-884c-3d4ea3b78c44/file/mp3/file.mp3"},{"id":"e5756d36-197a-46f7-aed5-afa6ae9eab26","title":"Night Drive","artist":"Nebulite","duration":195,"cover":"https://eu.data.freetouse.com/music/tracks/e5756d36-197a-46f7-aed5-afa6ae9eab26/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/e5756d36-197a-46f7-aed5-afa6ae9eab26/file/mp3/file.mp3"},{"id":"1c628317-05c3-4257-b4ce-a9d67a1d0440","title":"Remain","artist":"Alegend","duration":172,"cover":"https://eu.data.freetouse.com/music/tracks/1c628317-05c3-4257-b4ce-a9d67a1d0440/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/1c628317-05c3-4257-b4ce-a9d67a1d0440/file/mp3/file.mp3"},{"id":"f5096754-4ce7-f995-4ce8-25daef51ade9","title":"honey jam","artist":"massobeats","duration":133,"cover":"https://eu.data.freetouse.com/music/tracks/f5096754-4ce7-f995-4ce8-25daef51ade9/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/f5096754-4ce7-f995-4ce8-25daef51ade9/file/mp3/file.mp3"},{"id":"86726550-723d-402a-bf16-cf497f7f45bf","title":"Silhouette","artist":"Moavii","duration":140,"cover":"https://eu.data.freetouse.com/music/tracks/86726550-723d-402a-bf16-cf497f7f45bf/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/86726550-723d-402a-bf16-cf497f7f45bf/file/mp3/file.mp3"},{"id":"67e80b77-8bf2-4475-866b-eab66c48b178","title":"Wings of Freedom","artist":"Alegend","duration":126,"cover":"https://eu.data.freetouse.com/music/tracks/67e80b77-8bf2-4475-866b-eab66c48b178/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/67e80b77-8bf2-4475-866b-eab66c48b178/file/mp3/file.mp3"},{"id":"c5d1d8fb-81b7-4965-b8e0-4106e31983b5","title":"Coral Reef","artist":"Aetheric","duration":141,"cover":"https://eu.data.freetouse.com/music/tracks/c5d1d8fb-81b7-4965-b8e0-4106e31983b5/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/c5d1d8fb-81b7-4965-b8e0-4106e31983b5/file/mp3/file.mp3"},{"id":"ecc715e6-b16a-2412-2f6b-c2086a505835","title":"Beautiful Liar","artist":"AgusAlvarez","duration":219,"cover":"https://eu.data.freetouse.com/music/tracks/ecc715e6-b16a-2412-2f6b-c2086a505835/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/ecc715e6-b16a-2412-2f6b-c2086a505835/file/mp3/file.mp3"},{"id":"f67fd291-a51f-4b23-b4fa-1130871ec892","title":"thoughts","artist":"massobeats","duration":157,"cover":"https://eu.data.freetouse.com/music/tracks/f67fd291-a51f-4b23-b4fa-1130871ec892/cover/webp/md/cover-md.webp","url":"https://eu.data.freetouse.com/music/tracks/f67fd291-a51f-4b23-b4fa-1130871ec892/file/mp3/file.mp3"}];
+const tracks = [
+  {id:"1",title:"Deja Vu",artist:"Aeris",cover:"https://eu.data.freetouse.com/music/tracks/427181eb-a1a4-4983-bde3-9d08abb7f768/cover/webp/md/cover-md.webp",url:"https://eu.data.freetouse.com/music/tracks/427181eb-a1a4-4983-bde3-9d08abb7f768/file/mp3/file.mp3"},
+  {id:"2",title:"Bloom",artist:"Nebulite",cover:"https://eu.data.freetouse.com/music/tracks/f78ea6a2-1063-654f-ddff-a052198609a2/cover/webp/md/cover-md.webp",url:"https://eu.data.freetouse.com/music/tracks/f78ea6a2-1063-654f-ddff-a052198609a2/file/mp3/file.mp3"},
+  {id:"3",title:"Back To Synthwave",artist:"Nebulite",cover:"https://eu.data.freetouse.com/music/tracks/40973ee4-4486-4513-9046-09d2749642b4/cover/webp/md/cover-md.webp",url:"https://eu.data.freetouse.com/music/tracks/40973ee4-4486-4513-9046-09d2749642b4/file/mp3/file.mp3"},
+  {id:"4",title:"Stellar",artist:"Aventure",cover:"https://eu.data.freetouse.com/music/tracks/7d57ea7a-85a8-4f71-97c8-7b777eaa02f6/cover/webp/md/cover-md.webp",url:"https://eu.data.freetouse.com/music/tracks/7d57ea7a-85a8-4f71-97c8-7b777eaa02f6/file/mp3/file.mp3"},
+  {id:"5",title:"At Ease",artist:"Hazelwood",cover:"https://eu.data.freetouse.com/music/tracks/ba1fa94b-1d39-7b71-7fc1-63ef5c30f357/cover/webp/md/cover-md.webp",url:"https://eu.data.freetouse.com/music/tracks/ba1fa94b-1d39-7b71-7fc1-63ef5c30f357/file/mp3/file.mp3"},
+  {id:"6",title:"This Is For You",artist:"Lukrembo",cover:"https://eu.data.freetouse.com/music/tracks/f58126e1-6516-192a-8a96-c8145fb11d6f/cover/webp/md/cover-md.webp",url:"https://eu.data.freetouse.com/music/tracks/f58126e1-6516-192a-8a96-c8145fb11d6f/file/mp3/file.mp3"},
+  {id:"7",title:"Stadium Rock",artist:"Pufino",cover:"https://eu.data.freetouse.com/music/tracks/6aba646c-9e36-7145-ad6a-157dbadf2778/cover/webp/md/cover-md.webp",url:"https://eu.data.freetouse.com/music/tracks/6aba646c-9e36-7145-ad6a-157dbadf2778/file/mp3/file.mp3"},
+  {id:"8",title:"Night Drive",artist:"Nebulite",cover:"https://eu.data.freetouse.com/music/tracks/e5756d36-197a-46f7-aed5-afa6ae9eab26/cover/webp/md/cover-md.webp",url:"https://eu.data.freetouse.com/music/tracks/e5756d36-197a-46f7-aed5-afa6ae9eab26/file/mp3/file.mp3"},
+  {id:"9",title:"Remain",artist:"Alegend",cover:"https://eu.data.freetouse.com/music/tracks/1c628317-05c3-4257-b4ce-a9d67a1d0440/cover/webp/md/cover-md.webp",url:"https://eu.data.freetouse.com/music/tracks/1c628317-05c3-4257-b4ce-a9d67a1d0440/file/mp3/file.mp3"},
+  {id:"10",title:"honey jam",artist:"massobeats",cover:"https://eu.data.freetouse.com/music/tracks/f5096754-4ce7-f995-4ce8-25daef51ade9/cover/webp/md/cover-md.webp",url:"https://eu.data.freetouse.com/music/tracks/f5096754-4ce7-f995-4ce8-25daef51ade9/file/mp3/file.mp3"},
+  {id:"11",title:"Silhouette",artist:"Moavii",cover:"https://eu.data.freetouse.com/music/tracks/86726550-723d-402a-bf16-cf497f7f45bf/cover/webp/md/cover-md.webp",url:"https://eu.data.freetouse.com/music/tracks/86726550-723d-402a-bf16-cf497f7f45bf/file/mp3/file.mp3"},
+  {id:"12",title:"Wings of Freedom",artist:"Alegend",cover:"https://eu.data.freetouse.com/music/tracks/67e80b77-8bf2-4475-866b-eab66c48b178/cover/webp/md/cover-md.webp",url:"https://eu.data.freetouse.com/music/tracks/67e80b77-8bf2-4475-866b-eab66c48b178/file/mp3/file.mp3"},
+  {id:"13",title:"Coral Reef",artist:"Aetheric",cover:"https://eu.data.freetouse.com/music/tracks/c5d1d8fb-81b7-4965-b8e0-4106e31983b5/cover/webp/md/cover-md.webp",url:"https://eu.data.freetouse.com/music/tracks/c5d1d8fb-81b7-4965-b8e0-4106e31983b5/file/mp3/file.mp3"},
+  {id:"14",title:"Beautiful Liar",artist:"AgusAlvarez",cover:"https://eu.data.freetouse.com/music/tracks/ecc715e6-b16a-2412-2f6b-c2086a505835/cover/webp/md/cover-md.webp",url:"https://eu.data.freetouse.com/music/tracks/ecc715e6-b16a-2412-2f6b-c2086a505835/file/mp3/file.mp3"},
+  {id:"15",title:"thoughts",artist:"massobeats",cover:"https://eu.data.freetouse.com/music/tracks/f67fd291-a51f-4b23-b4fa-1130871ec892/cover/webp/md/cover-md.webp",url:"https://eu.data.freetouse.com/music/tracks/f67fd291-a51f-4b23-b4fa-1130871ec892/file/mp3/file.mp3"}
+];
 
-let currentIndex = -1;
-let isPlaying = false;
-let liked = JSON.parse(localStorage.getItem('rmusic_liked') || '[]');
+let idx = -1, playing = false;
+let liked = JSON.parse(localStorage.getItem('rm_liked')||'[]');
 
-const content = document.getElementById('content');
+const screen = document.getElementById('screen');
 const audio = document.getElementById('audio');
-const miniPlayer = document.getElementById('miniPlayer');
-const mpCover = document.getElementById('mpCover');
-const mpTitle = document.getElementById('mpTitle');
-const mpArtist = document.getElementById('mpArtist');
-const mpPlay = document.getElementById('mpPlay');
-const mpLike = document.getElementById('mpLike');
-const waveScreen = document.getElementById('waveScreen');
-const waveNow = document.getElementById('waveNow');
-const wavePlayBtn = document.getElementById('wavePlayBtn');
+const player = document.getElementById('player');
+const pCover = document.getElementById('pCover');
+const pTitle = document.getElementById('pTitle');
+const pArtist = document.getElementById('pArtist');
+const pPlay = document.getElementById('pPlay');
+const pLike = document.getElementById('pLike');
+const wave = document.getElementById('wave');
+const waveBtn = document.getElementById('waveBtn');
+const waveTrack = document.getElementById('waveTrack');
 
-function renderHome() {
-  content.innerHTML = `
-    <div class="topbar"><div style="width:36px"></div><h1>Что послушать</h1><button class="icon-btn">⌕</button></div>
+function home() {
+  const likedT = tracks.filter(t => liked.includes(t.id));
+  screen.innerHTML = `
+    <div class="hdr"><div style="width:32px"></div><h1>Что послушать</h1><button class="hdr-btn">⌕</button></div>
     <div class="cats">
-      <div class="cat" onclick="startWave()"><div class="cat-icon" style="background:linear-gradient(135deg,#f5d76e,#c9a227)">⚡</div><span>Волна</span></div>
-      <div class="cat"><div class="cat-icon" style="background:linear-gradient(135deg,#a8c0ff,#6b8cff)">📚</div><span>Книги</span></div>
-      <div class="cat"><div class="cat-icon" style="background:linear-gradient(135deg,#ffb347,#ff8c42)">🧸</div><span>Детям</span></div>
-      <div class="cat"><div class="cat-icon" style="background:linear-gradient(135deg,#7dcea0,#27ae60)">🎙️</div><span>Подкасты</span></div>
+      <div class="cat" onclick="openWave()"><div class="cat-ico" style="background:linear-gradient(145deg,#ffe566,#fcca00)">⚡</div><span>Волна</span></div>
+      <div class="cat"><div class="cat-ico" style="background:linear-gradient(145deg,#b8d0ff,#6b9aff)">📚</div><span>Книги</span></div>
+      <div class="cat"><div class="cat-ico" style="background:linear-gradient(145deg,#ffc78a,#ff9a4d)">🧸</div><span>Детям</span></div>
+      <div class="cat"><div class="cat-ico" style="background:linear-gradient(145deg,#9eebc0,#3dd68c)">🎙️</div><span>Подкасты</span></div>
     </div>
-    <div class="section">
-      <div class="section-head"><h2>Мне нравится</h2></div>
-      <div class="h-scroll" id="likedScroll"></div>
+    <div class="sec">
+      <div class="sec-title">Мне нравится</div>
+      <div class="row" id="likedRow"></div>
     </div>
-    <div class="promo">
-      <div class="promo-text"><h3>Золотая Волна<br>ждёт тебя</h3><p>Персональный поток под настроение</p><button class="promo-btn" onclick="startWave()">Поехали</button></div>
-      <div class="promo-art">✧</div>
+    <div class="banner">
+      <div style="flex:1">
+        <h3>Золотая Волна<br>ждёт тебя</h3>
+        <p>Персональный поток под настроение</p>
+        <button class="banner-btn" onclick="openWave()">Поехали</button>
+      </div>
+      <div class="banner-art">✧</div>
     </div>
-    <div class="section">
-      <div class="section-head"><h2>Рекомендации</h2></div>
-      <div class="h-scroll" id="recScroll"></div>
+    <div class="sec">
+      <div class="sec-title">Рекомендации</div>
+      <div class="row" id="recRow"></div>
     </div>
-    <div class="section">
-      <div class="section-head"><h2>Треки</h2></div>
-      <div id="trackList"></div>
+    <div class="sec">
+      <div class="sec-title">Треки</div>
+      <div id="list"></div>
     </div>`;
 
-  const likedTracks = tracks.filter(t => liked.includes(t.id));
-  const ls = document.getElementById('likedScroll');
-  if (likedTracks.length) {
-    likedTracks.forEach(t => {
+  const lr = document.getElementById('likedRow');
+  if (likedT.length) {
+    likedT.forEach(t => {
       const i = tracks.indexOf(t);
-      ls.innerHTML += `<div class="playlist-card" onclick="playTrack(${i})"><div class="cover"><img src="${t.cover}" onerror="this.style.display='none'"></div><div class="title">${t.title}</div><div class="sub">${t.artist}</div></div>`;
+      lr.innerHTML += `<div class="card" onclick="play(${i})"><div class="card-img"><img src="${t.cover}" onerror="this.style.opacity=0"></div><div class="card-title">${t.title}</div><div class="card-sub">${t.artist}</div></div>`;
     });
-  } else ls.innerHTML = '<div style="color:var(--text2);padding:16px 0;font-size:14px">Лайкай треки ♡</div>';
+  } else lr.innerHTML = '<div style="color:var(--muted);font-size:14px;padding:12px 0">Лайкай треки ♡</div>';
 
-  const rec = document.getElementById('recScroll');
-  tracks.slice(0, 10).forEach((t, i) => {
-    rec.innerHTML += `<div class="playlist-card" onclick="playTrack(${i})"><div class="cover"><img src="${t.cover}" loading="lazy" onerror="this.style.display='none'"></div><div class="title">${t.title}</div><div class="sub">${t.artist}</div></div>`;
+  const rr = document.getElementById('recRow');
+  tracks.slice(0,8).forEach((t,i) => {
+    rr.innerHTML += `<div class="card" onclick="play(${i})"><div class="card-img"><img src="${t.cover}" loading="lazy" onerror="this.style.opacity=0"></div><div class="card-title">${t.title}</div><div class="card-sub">${t.artist}</div></div>`;
   });
 
-  const list = document.getElementById('trackList');
-  tracks.forEach((t, i) => {
-    list.innerHTML += `<div class="track-item" onclick="playTrack(${i})"><img class="t-cover" src="${t.cover}" onerror="this.src=''"><div class="t-info"><div class="t-title">${t.title}</div><div class="t-artist">${t.artist}</div></div></div>`;
+  const list = document.getElementById('list');
+  tracks.forEach((t,i) => {
+    list.innerHTML += `<div class="trow" onclick="play(${i})"><img src="${t.cover}" onerror="this.style.opacity=0"><div class="info"><div class="name">${t.title}</div><div class="art">${t.artist}</div></div></div>`;
   });
 }
 
-function renderCollection() {
-  const likedTracks = tracks.filter(t => liked.includes(t.id));
-  content.innerHTML = `
-    <div class="topbar"><button class="icon-btn">☺</button><h1>Коллекция</h1><button class="icon-btn">⌕</button></div>
-    <div class="big-heart">💜</div>
-    <div class="collection-title">Моя волна по коллекции</div>
-    <div class="collection-sub">У вашей музыки есть цвет</div>
-    <div class="liked-row"><div class="heart-icon">♥</div><div><h3 style="font-size:16px;font-weight:600">Мне нравится</h3><p style="font-size:13px;color:var(--text2)">${likedTracks.length} треков</p></div></div>
+function collection() {
+  const likedT = tracks.filter(t => liked.includes(t.id));
+  screen.innerHTML = `
+    <div class="hdr"><button class="hdr-btn">☺</button><h1>Коллекция</h1><button class="hdr-btn">⌕</button></div>
+    <div class="col-heart">💜</div>
+    <div class="col-title">Моя волна по коллекции</div>
+    <div class="col-sub">У вашей музыки есть цвет</div>
+    <div class="like-block">
+      <div class="like-ico">♥</div>
+      <div><div style="font-size:16px;font-weight:600">Мне нравится</div><div style="font-size:13px;color:var(--muted)">${likedT.length} треков</div></div>
+    </div>
     <div style="padding:0 16px">
-      ${likedTracks.length ? likedTracks.map(t => {
+      ${likedT.length ? likedT.map(t => {
         const i = tracks.indexOf(t);
-        return `<div class="track-item" onclick="playTrack(${i})"><img class="t-cover" src="${t.cover}"><div class="t-info"><div class="t-title">${t.title}</div><div class="t-artist">${t.artist}</div></div></div>`;
-      }).join('') : '<p style="text-align:center;color:var(--text2);padding:30px">Пока пусто</p>'}
+        return `<div class="trow" onclick="play(${i})"><img src="${t.cover}"><div class="info"><div class="name">${t.title}</div><div class="art">${t.artist}</div></div></div>`;
+      }).join('') : '<p style="text-align:center;color:var(--muted);padding:40px 0">Пока пусто</p>'}
     </div>`;
 }
 
-function renderProfile() {
-  content.innerHTML = `
-    <div class="topbar"><button class="icon-btn">←</button><h1>Профиль</h1><div style="width:36px"></div></div>
-    <div class="profile-avatar">R</div>
-    <div class="profile-name">ravilrrrrrrr</div>
-    <div class="profile-sub">R&Music</div>
-    <div class="menu-item"><span>Управлять подпиской</span><span>›</span></div>
-    <div class="menu-item"><span>Настройки</span><span>›</span></div>
-    <div class="menu-item"><span>О приложении</span><span>›</span></div>`;
+function profile() {
+  screen.innerHTML = `
+    <div class="hdr"><button class="hdr-btn">←</button><h1>Профиль</h1><div style="width:32px"></div></div>
+    <div class="av">R</div>
+    <div class="pname">ravilrrrrrrr</div>
+    <div class="psub">R&Music</div>
+    <div class="mitem"><span>Управлять подпиской</span><span>›</span></div>
+    <div class="mitem"><span>Настройки</span><span>›</span></div>
+    <div class="mitem"><span>О приложении</span><span>›</span></div>`;
 }
 
-function playTrack(i) {
+function play(i) {
   if (i < 0 || i >= tracks.length) return;
-  currentIndex = i;
+  idx = i;
   const t = tracks[i];
-  mpTitle.textContent = t.title;
-  mpArtist.textContent = t.artist;
-  mpCover.src = t.cover;
-  miniPlayer.classList.add('show');
-  mpLike.textContent = liked.includes(t.id) ? '♥' : '♡';
-  mpLike.classList.toggle('liked', liked.includes(t.id));
-  waveNow.textContent = t.artist + ' — ' + t.title;
+  pTitle.textContent = t.title;
+  pArtist.textContent = t.artist;
+  pCover.src = t.cover;
+  player.classList.add('show');
+  pLike.textContent = liked.includes(t.id) ? '♥' : '♡';
+  pLike.classList.toggle('liked', liked.includes(t.id));
+  waveTrack.textContent = t.artist + ' — ' + t.title;
   audio.src = t.url;
   audio.play().then(() => {
-    isPlaying = true;
-    mpPlay.textContent = '⏸';
-    wavePlayBtn.textContent = '⏸';
-  }).catch(e => console.log('play error', e));
+    playing = true;
+    pPlay.textContent = '⏸';
+    waveBtn.textContent = '⏸';
+  }).catch(()=>{});
 }
 
-function togglePlay() {
-  if (currentIndex < 0) { playTrack(0); return; }
-  if (isPlaying) {
-    audio.pause(); isPlaying = false;
-    mpPlay.textContent = '▶'; wavePlayBtn.textContent = '▶';
+function toggle() {
+  if (idx < 0) { play(0); return; }
+  if (playing) {
+    audio.pause(); playing = false;
+    pPlay.textContent = '▶'; waveBtn.textContent = '▶';
   } else {
-    audio.play(); isPlaying = true;
-    mpPlay.textContent = '⏸'; wavePlayBtn.textContent = '⏸';
+    audio.play(); playing = true;
+    pPlay.textContent = '⏸'; waveBtn.textContent = '⏸';
   }
 }
 
-function startWave() {
-  waveScreen.classList.add('open');
-  playTrack(Math.floor(Math.random() * tracks.length));
+function openWave() {
+  wave.classList.add('on');
+  if (idx < 0) play(Math.floor(Math.random()*tracks.length));
+  else if (!playing) toggle();
 }
 
 function toggleLike() {
-  if (currentIndex < 0) return;
-  const id = tracks[currentIndex].id;
+  if (idx < 0) return;
+  const id = tracks[idx].id;
   if (liked.includes(id)) liked = liked.filter(x => x !== id);
   else liked.push(id);
-  localStorage.setItem('rmusic_liked', JSON.stringify(liked));
-  mpLike.textContent = liked.includes(id) ? '♥' : '♡';
-  mpLike.classList.toggle('liked', liked.includes(id));
+  localStorage.setItem('rm_liked', JSON.stringify(liked));
+  pLike.textContent = liked.includes(id) ? '♥' : '♡';
+  pLike.classList.toggle('liked', liked.includes(id));
 }
 
-audio.addEventListener('ended', () => playTrack((currentIndex + 1) % tracks.length));
-mpPlay.onclick = e => { e.stopPropagation(); togglePlay(); };
-mpLike.onclick = e => { e.stopPropagation(); toggleLike(); };
-wavePlayBtn.onclick = togglePlay;
-document.getElementById('waveClose').onclick = () => waveScreen.classList.remove('open');
+audio.addEventListener('ended', () => play((idx+1) % tracks.length));
+pPlay.onclick = e => { e.stopPropagation(); toggle(); };
+pLike.onclick = e => { e.stopPropagation(); toggleLike(); };
+waveBtn.onclick = toggle;
+document.getElementById('waveBack').onclick = () => wave.classList.remove('on');
 
 document.querySelectorAll('.tab').forEach(tab => {
   tab.onclick = () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    const n = tab.dataset.tab;
-    if (n === 'home') renderHome();
-    else if (n === 'wave') startWave();
-    else if (n === 'collection') renderCollection();
-    else if (n === 'profile') renderProfile();
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    tab.classList.add('on');
+    const n = tab.dataset.t;
+    if (n === 'home') home();
+    else if (n === 'wave') openWave();
+    else if (n === 'col') collection();
+    else if (n === 'prof') profile();
   };
 });
 
-renderHome();
+home();
 </script>
 </body>
 </html>
